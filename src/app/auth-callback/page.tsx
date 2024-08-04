@@ -26,7 +26,7 @@ const Page = () => {
     
     if (authData?.success === false) {
         // User is synced to the database
-        router.push('https://pdflexayush.kinde.com/auth/cx/_:nav&m:login&psid:fc4dcf7ea41645d8ba066817ed64c38e');
+        router.push('https://inquirydoc.kinde.com/auth/cx/_:nav&m:login&psid:8e05244e084b47b8824919958c4f327a');
     }
 
     return (
