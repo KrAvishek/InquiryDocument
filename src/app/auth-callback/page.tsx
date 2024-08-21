@@ -45,27 +45,28 @@
 // export default Page
 "use client";
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { trpc } from '../_trpc/client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 
 function Page() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const origin = searchParams.get('origin');
+  const [origin, setOrigin] = useState<string | null>(null);
+
+  // Handle query without useSearchParams
+  useEffect(() => {
+    const query = new URLSearchParams(window.location.search);
+    setOrigin(query.get('origin'));
+  }, []);
 
   const { data, isLoading, error } = trpc.authCallback.useQuery(undefined);
 
   useEffect(() => {
-    // error code unathorized : 
-    if (error?.data?.code === "UNAUTHORIZED" ) {
+    if (error?.data?.code === "UNAUTHORIZED") {
       router.push("/sign-in");
-    }
-
-    // success
-    else if (!isLoading) {
-      router.push((data !== undefined && data.success && origin) ? `/${origin}` : "/dashboard");
+    } else if (!isLoading && data) {
+      router.push(origin ? `/${origin}` : "/dashboard");
     }
   }, [data, isLoading, error, origin, router]);
 
@@ -76,7 +77,7 @@ function Page() {
         <h3 className='font-semibold text-xl'>
           Setting up your account...
         </h3>
-        <p>You will be redirected automatically. </p>
+        <p>You will be redirected automatically.</p>
       </div>
     </div>
   );
